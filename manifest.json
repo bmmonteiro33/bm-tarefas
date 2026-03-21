@@ -1,0 +1,26 @@
+{
+  "name": "BM Tarefas – Bruno Monteiro Advocacia",
+  "short_name": "BM Tarefas",
+  "description": "Organizador pessoal de tarefas do escritório Bruno Monteiro Advocacia",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0d2041",
+  "background_color": "#f2f0eb",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"]
+}
