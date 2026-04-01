@@ -1,4 +1,4 @@
-const CACHE = 'bm-tarefas-v2';
+const CACHE = 'bm-tarefas-v3';
 const FILES = [
   './index.html',
   './manifest.json',
