@@ -197,6 +197,36 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
 }
 .fab:hover{background:var(--accent2);transform:scale(1.06)}
 .fab.hidden{display:none}
+.fab.menu-open{background:var(--navy);transform:rotate(45deg)}
+.fab.menu-open:hover{background:var(--navy2)}
+
+/* ── FAB MENU ──────────────────────────────────── */
+.fab-menu{
+  position:absolute;
+  bottom:calc(var(--nav-h) + 80px);
+  right:16px;
+  display:flex;flex-direction:column;gap:9px;
+  z-index:16;pointer-events:none;
+  opacity:0;transform:translateY(10px);
+  transition:opacity .18s ease,transform .18s ease;
+}
+.fab-menu.open{opacity:1;transform:translateY(0);pointer-events:auto}
+.fab-menu-item{display:flex;align-items:center;justify-content:flex-end;gap:10px}
+.fab-menu-lbl{
+  background:var(--navy);color:#fff;
+  font-size:.74rem;font-weight:700;letter-spacing:.2px;
+  padding:6px 13px;border-radius:20px;
+  box-shadow:0 2px 10px rgba(13,32,65,.22);
+  white-space:nowrap;cursor:default;
+}
+.fab-menu-btn{
+  width:40px;height:40px;border-radius:50%;border:none;
+  background:var(--navy);color:#fff;font-size:.95rem;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 12px rgba(13,32,65,.28);flex-shrink:0;
+  transition:background .15s,transform .1s;
+}
+.fab-menu-btn:hover{background:var(--navy2);transform:scale(1.08)}
 
 /* ── DAILY VIEW ────────────────────────────────── */
 .section{padding:14px 14px 0}
@@ -492,6 +522,18 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
     <div style="height:76px"></div>
   </div>
 
+  <!-- FAB MENU -->
+  <div class="fab-menu" id="fab-menu">
+    <div class="fab-menu-item">
+      <span class="fab-menu-lbl">Atividade completa</span>
+      <button class="fab-menu-btn" id="fab-full">📋</button>
+    </div>
+    <div class="fab-menu-item">
+      <span class="fab-menu-lbl">Tarefa rápida</span>
+      <button class="fab-menu-btn" id="fab-quick">⚡</button>
+    </div>
+  </div>
+
   <!-- FAB -->
   <button class="fab" id="fab">+</button>
 
@@ -556,6 +598,37 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
     <div class="modal-btns">
       <button class="btn-c" id="btn-del-cancel">Cancelar</button>
       <button class="btn-del" id="btn-del-ok">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: tarefa rápida -->
+<div class="overlay" id="quick-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3 id="quick-title">Tarefa rápida</h3>
+    <div class="frow">
+      <label>Nome *</label>
+      <input type="text" id="quick-inp-title" placeholder="Ex: Ligação para cliente" maxlength="90">
+    </div>
+    <div class="frow2">
+      <div class="frow" style="margin-bottom:0">
+        <label>Tipo</label>
+        <select id="quick-inp-cat">
+          <option value="urgente">🔴 Urgente</option>
+          <option value="trabalho" selected>🔵 Trabalho</option>
+          <option value="pessoal">🟢 Pessoal</option>
+          <option value="reuniao">🟣 Reunião</option>
+        </select>
+      </div>
+      <div class="frow" style="margin-bottom:0">
+        <label>Horário</label>
+        <input type="time" id="quick-inp-time">
+      </div>
+    </div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button class="btn-c" id="btn-quick-cancel">Cancelar</button>
+      <button class="btn-s" id="btn-quick-save">Salvar</button>
     </div>
   </div>
 </div>
@@ -625,6 +698,7 @@ let modalDate = null;
 let viewDate = new Date(TODAY); // date being viewed in daily view
 let detailTask = null;
 let detailDateKey = null;
+let quickModalDate = null;
 
 /* ══ RENDER: DAILY ═══════════════════════════ */
 function renderDaily(){
@@ -892,6 +966,7 @@ function renderCalPanel(){
 /* ══ VIEW SWITCHING ══════════════════════════ */
 function switchView(target){
   currentView=target;
+  closeFabMenu();
 
   // views
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -938,6 +1013,38 @@ function openModal(dateStr){
 
 function closeModal(){ $id('modal-overlay').classList.remove('open'); }
 
+/* ══ FAB MENU ════════════════════════════════ */
+function closeFabMenu(){
+  $id('fab-menu').classList.remove('open');
+  $id('fab').classList.remove('menu-open');
+}
+
+/* ══ QUICK MODAL ══════════════════════════════ */
+function openQuickModal(dateStr){
+  closeFabMenu();
+  quickModalDate=dateStr||todayKey();
+  $id('quick-inp-title').value='';
+  $id('quick-inp-time').value='';
+  $id('quick-inp-cat').value='trabalho';
+  $id('quick-title').textContent='Tarefa rápida — '+fmtLong(quickModalDate);
+  $id('quick-overlay').classList.add('open');
+  setTimeout(()=>$id('quick-inp-title').focus(),150);
+}
+
+function closeQuickModal(){ $id('quick-overlay').classList.remove('open'); }
+
+function saveQuickTask(){
+  const title=$id('quick-inp-title').value.trim();
+  if(!title){ $id('quick-inp-title').focus(); return; }
+  const time=$id('quick-inp-time').value;
+  const cat=$id('quick-inp-cat').value;
+  dbDay(quickModalDate).push({id:uid(),title,time,cat,desc:'',done:false});
+  dbSave();
+  closeQuickModal();
+  if(currentView==='cal'){ selCalDate=quickModalDate; calYear=parseInt(quickModalDate.split('-')[0]); calMonth=parseInt(quickModalDate.split('-')[1])-1; }
+  renderCurrent();
+}
+
 function saveTask(){
   const title=$id('inp-title').value.trim();
   if(!title){ $id('inp-title').focus(); return; }
@@ -966,16 +1073,41 @@ $id('btn-day-next').addEventListener('click',()=>{
   viewDate.setDate(viewDate.getDate()+1); renderDaily();
 });
 
-// FAB
-$id('fab').addEventListener('click',()=>{
+// FAB toggle menu
+$id('fab').addEventListener('click',e=>{
+  e.stopPropagation();
+  const isOpen=$id('fab-menu').classList.toggle('open');
+  $id('fab').classList.toggle('menu-open',isOpen);
+});
+// Close menu when clicking elsewhere
+document.addEventListener('click',()=>closeFabMenu());
+// Prevent menu clicks from bubbling to document
+$id('fab-menu').addEventListener('click',e=>e.stopPropagation());
+
+// FAB menu: atividade completa
+$id('fab-full').addEventListener('click',e=>{
+  e.stopPropagation();
+  closeFabMenu();
   const vk=toKey(viewDate.getFullYear(),viewDate.getMonth(),viewDate.getDate());
   openModal(currentView==='cal'?selCalDate:vk);
+});
+
+// FAB menu: tarefa rápida
+$id('fab-quick').addEventListener('click',e=>{
+  e.stopPropagation();
+  const vk=toKey(viewDate.getFullYear(),viewDate.getMonth(),viewDate.getDate());
+  openQuickModal(currentView==='cal'?selCalDate:vk);
 });
 
 // Modal
 $id('btn-modal-cancel').addEventListener('click',closeModal);
 $id('btn-modal-save').addEventListener('click',saveTask);
 $id('modal-overlay').addEventListener('click',e=>{ if(e.target===$id('modal-overlay')) closeModal(); });
+
+// Quick modal
+$id('btn-quick-cancel').addEventListener('click',closeQuickModal);
+$id('btn-quick-save').addEventListener('click',saveQuickTask);
+$id('quick-overlay').addEventListener('click',e=>{ if(e.target===$id('quick-overlay')) closeQuickModal(); });
 
 // Calendar nav
 $id('btn-prev').addEventListener('click',()=>{ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCal(); });
@@ -998,8 +1130,14 @@ $id('detail-overlay').addEventListener('click',e=>{ if(e.target===$id('detail-ov
 
 // Keyboard
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeModal(); closeDetail(); $id('confirm-overlay').classList.remove('open'); }
-  if(e.key==='Enter'&&$id('modal-overlay').classList.contains('open')&&document.activeElement.tagName!=='TEXTAREA') saveTask();
+  if(e.key==='Escape'){
+    closeModal(); closeDetail(); closeQuickModal(); closeFabMenu();
+    $id('confirm-overlay').classList.remove('open');
+  }
+  if(e.key==='Enter'){
+    if($id('modal-overlay').classList.contains('open')&&document.activeElement.tagName!=='TEXTAREA') saveTask();
+    if($id('quick-overlay').classList.contains('open')&&document.activeElement.tagName!=='TEXTAREA') saveQuickTask();
+  }
 });
 
 /* ══ PWA: INSTALL PROMPT ══════════════════════ */
