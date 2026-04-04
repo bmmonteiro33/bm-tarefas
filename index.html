@@ -413,6 +413,173 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
 @media(min-width:431px){
   .app{box-shadow:0 0 50px rgba(0,0,0,.18);border-radius:24px;margin-top:16px;height:calc(100vh - 32px)}
 }
+
+/* ══ FINANCIAL VIEW ════════════════════════════════ */
+.fin-period-tabs{
+  display:flex;gap:6px;padding:14px 14px 8px;overflow-x:auto;
+  scrollbar-width:none;
+}
+.fin-period-tabs::-webkit-scrollbar{display:none}
+.fin-tab{
+  flex-shrink:0;padding:6px 14px;border-radius:20px;
+  border:1.5px solid var(--border);background:#fff;
+  font-size:.72rem;font-weight:700;color:var(--muted);transition:all .15s;
+}
+.fin-tab.active{background:var(--navy);border-color:var(--navy);color:#fff}
+
+.fin-cards{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:8px;padding:0 14px 14px;
+}
+.fin-card{
+  background:var(--card);border-radius:13px;padding:12px 8px;
+  text-align:center;box-shadow:0 2px 10px rgba(13,32,65,.07);
+  border-top:3px solid transparent;
+}
+.fin-card.receita{border-top-color:#2a7a52}
+.fin-card.despesa{border-top-color:#e05555}
+.fin-card.saldo.positive{border-top-color:#1e4d8c}
+.fin-card.saldo.negative{border-top-color:#c4613a}
+.fin-card-lbl{
+  font-size:.58rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--muted);margin-bottom:5px;
+}
+.fin-card-val{font-size:.78rem;font-weight:800;color:var(--text);line-height:1.2}
+.fin-card.receita .fin-card-val{color:#2a7a52}
+.fin-card.despesa .fin-card-val{color:#e05555}
+.fin-card.saldo.negative .fin-card-val{color:#c4613a}
+
+.fin-section{padding:0 14px 16px}
+.fin-section-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.fin-section-title{
+  font-size:.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--muted);margin-bottom:10px;
+}
+.fin-section-hdr .fin-section-title{margin-bottom:0}
+
+.fin-actions{display:flex;gap:7px}
+.fin-btn-import{
+  background:#f0ede8;border:none;border-radius:20px;
+  padding:6px 12px;font-size:.7rem;font-weight:700;color:var(--muted);
+  transition:background .15s;
+}
+.fin-btn-import:hover{background:#e5e2dc}
+.fin-btn-add{
+  background:var(--accent);color:#fff;border:none;
+  border-radius:20px;padding:6px 13px;font-size:.7rem;font-weight:700;
+  transition:background .15s;
+}
+.fin-btn-add:hover{background:var(--accent2)}
+
+.fin-chart-wrap{
+  background:var(--card);border-radius:13px;padding:12px 10px 6px;
+  box-shadow:0 2px 10px rgba(13,32,65,.07);
+}
+.fin-chart-legend{
+  display:flex;gap:14px;justify-content:center;
+  padding:6px 0 4px;flex-wrap:wrap;
+}
+.fin-leg-item{
+  display:flex;align-items:center;gap:5px;
+  font-size:.65rem;color:var(--muted);font-weight:600;
+}
+.fin-leg-item::before{
+  content:'';width:10px;height:10px;border-radius:3px;display:inline-block;
+}
+.fin-leg-receita::before{background:#2a7a52}
+.fin-leg-despesa::before{background:#e05555}
+
+.fin-pie-wrap{
+  background:var(--card);border-radius:13px;padding:14px;
+  box-shadow:0 2px 10px rgba(13,32,65,.07);
+  display:flex;align-items:center;gap:16px;
+}
+.fin-pie-legend{flex:1;display:flex;flex-direction:column;gap:7px}
+.fin-pie-leg-item{display:flex;align-items:center;gap:7px}
+.fin-pie-leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.fin-pie-leg-name{flex:1;font-size:.68rem;color:var(--muted)}
+.fin-pie-leg-pct{font-size:.72rem;font-weight:800;color:var(--text)}
+.fin-pie-leg-val{font-size:.63rem;color:var(--muted);margin-left:2px}
+
+.fin-filter-tabs{display:flex;gap:6px;margin-bottom:10px}
+.fin-filter{
+  flex:1;padding:7px 4px;border-radius:10px;
+  border:1.5px solid var(--border);background:#fff;
+  font-size:.72rem;font-weight:700;color:var(--muted);transition:all .15s;
+}
+.fin-filter.active{background:var(--navy);border-color:var(--navy);color:#fff}
+
+.fin-txn-item{
+  background:var(--card);border-radius:12px;padding:11px 13px;
+  margin-bottom:7px;display:flex;align-items:center;gap:10px;
+  box-shadow:0 2px 8px rgba(13,32,65,.06);
+}
+.fin-txn-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;font-weight:800;flex-shrink:0;
+}
+.fin-txn-icon.receita{background:rgba(42,122,82,.12);color:#2a7a52}
+.fin-txn-icon.despesa{background:rgba(224,85,85,.12);color:#e05555}
+.fin-txn-body{flex:1;min-width:0}
+.fin-txn-desc{
+  font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.fin-txn-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fin-txn-date{font-size:.64rem;color:var(--muted)}
+.fin-txn-cat{
+  font-size:.6rem;font-weight:700;padding:2px 7px;
+  border-radius:20px;color:#fff;
+}
+.fin-txn-val{font-size:.9rem;font-weight:800;flex-shrink:0}
+.fin-txn-val.receita{color:#2a7a52}
+.fin-txn-val.despesa{color:#e05555}
+.fin-txn-del{
+  background:none;border:none;color:#d0ccc4;
+  font-size:.8rem;padding:2px 3px;border-radius:6px;
+  transition:color .15s,background .15s;flex-shrink:0;
+}
+.fin-txn-del:hover{color:#e05555;background:#fff0f0}
+
+.fin-empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:.82rem}
+.fin-empty-icon{font-size:2rem;margin-bottom:6px}
+
+/* Add transaction modal */
+.fin-type-btns{display:flex;gap:8px;margin-bottom:12px}
+.fin-type-btn{
+  flex:1;padding:9px;border-radius:10px;
+  border:2px solid var(--border);background:#fff;
+  font-size:.82rem;font-weight:700;color:var(--muted);transition:all .15s;
+}
+.fin-type-btn.active.receita{
+  background:rgba(42,122,82,.1);border-color:#2a7a52;color:#2a7a52;
+}
+.fin-type-btn.active.despesa{
+  background:rgba(224,85,85,.1);border-color:#e05555;color:#e05555;
+}
+
+/* Import modal */
+.fin-import-area{
+  border:2px dashed var(--border);border-radius:12px;padding:20px;
+  text-align:center;cursor:pointer;transition:border-color .15s;
+  margin-bottom:12px;
+}
+.fin-import-area:hover,.fin-import-area.drag{border-color:var(--navy)}
+.fin-import-area input[type=file]{display:none}
+.fin-import-lbl{font-size:.82rem;color:var(--muted);font-weight:500}
+.fin-import-preview{
+  max-height:110px;overflow-y:auto;background:#f7f5f0;
+  border-radius:10px;padding:8px 10px;font-size:.65rem;
+  color:var(--text);line-height:1.7;font-family:monospace;
+  white-space:pre;margin-bottom:10px;
+}
+.fin-import-count{
+  font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:8px;font-weight:600;
+}
 </style>
 </head>
 <body>
@@ -522,6 +689,74 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
     <div style="height:76px"></div>
   </div>
 
+  <!-- VIEW: FINANCEIRO -->
+  <div class="view" id="view-financeiro">
+    <!-- Period Selector -->
+    <div class="fin-period-tabs" id="fin-period-tabs">
+      <button class="fin-tab active" data-period="mes">Este mês</button>
+      <button class="fin-tab" data-period="3m">3 meses</button>
+      <button class="fin-tab" data-period="6m">6 meses</button>
+      <button class="fin-tab" data-period="ano">Este ano</button>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="fin-cards">
+      <div class="fin-card receita">
+        <div class="fin-card-lbl">Receitas</div>
+        <div class="fin-card-val" id="fin-total-receita">R$ 0</div>
+      </div>
+      <div class="fin-card despesa">
+        <div class="fin-card-lbl">Despesas</div>
+        <div class="fin-card-val" id="fin-total-despesa">R$ 0</div>
+      </div>
+      <div class="fin-card saldo positive" id="fin-saldo-card">
+        <div class="fin-card-lbl">Saldo</div>
+        <div class="fin-card-val" id="fin-total-saldo">R$ 0</div>
+      </div>
+    </div>
+
+    <!-- Bar Chart -->
+    <div class="fin-section">
+      <div class="fin-section-title">Evolução Mensal</div>
+      <div class="fin-chart-wrap">
+        <svg id="fin-bar-chart" height="150" style="width:100%;display:block;overflow:visible"></svg>
+        <div class="fin-chart-legend">
+          <span class="fin-leg-item fin-leg-receita">Receitas</span>
+          <span class="fin-leg-item fin-leg-despesa">Despesas</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="fin-section">
+      <div class="fin-section-title">Distribuição por Categoria</div>
+      <div class="fin-pie-wrap">
+        <svg id="fin-pie-chart" width="120" height="120" viewBox="0 0 120 120" style="flex-shrink:0"></svg>
+        <div class="fin-pie-legend" id="fin-pie-legend"></div>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="fin-section">
+      <div class="fin-section-hdr">
+        <div class="fin-section-title" style="margin-bottom:0">Lançamentos</div>
+        <div class="fin-actions">
+          <button class="fin-btn-import" id="fin-btn-import">📄 Extrato</button>
+          <button class="fin-btn-add" id="fin-btn-add">+ Novo</button>
+        </div>
+      </div>
+      <div style="height:8px"></div>
+      <div class="fin-filter-tabs">
+        <button class="fin-filter active" data-filter="todos">Todos</button>
+        <button class="fin-filter" data-filter="receita">Receitas</button>
+        <button class="fin-filter" data-filter="despesa">Despesas</button>
+      </div>
+      <div id="fin-txn-list"></div>
+    </div>
+
+    <div style="height:76px"></div>
+  </div>
+
   <!-- FAB MENU -->
   <div class="fab-menu" id="fab-menu">
     <div class="fab-menu-item">
@@ -546,7 +781,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
       <span class="nav-icon">📅</span><span class="nav-lbl">Calendário</span>
     </button>
     <button class="nav-btn" data-target="perfil">
-      <span class="nav-icon">👤</span><span class="nav-lbl">Perfil</span>
+      <span class="nav-icon">💰</span><span class="nav-lbl">Financeiro</span>
     </button>
   </nav>
 </div>
@@ -652,6 +887,62 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
       <button class="btn-det-close" id="btn-det-close">Fechar</button>
       <button class="btn-det-toggle" id="btn-det-toggle">Marcar como feita</button>
       <button class="btn-det-del" id="btn-det-del">🗑</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: nova transação financeira -->
+<div class="overlay" id="fin-modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Nova transação</h3>
+    <div class="fin-type-btns">
+      <button class="fin-type-btn active receita" id="fin-type-receita">↑ Receita</button>
+      <button class="fin-type-btn despesa" id="fin-type-despesa">↓ Despesa</button>
+    </div>
+    <div class="frow">
+      <label>Descrição *</label>
+      <input type="text" id="fin-inp-desc" placeholder="Ex: Honorários – Processo 123" maxlength="100">
+    </div>
+    <div class="frow2">
+      <div class="frow" style="margin-bottom:0">
+        <label>Valor (R$) *</label>
+        <input type="number" id="fin-inp-val" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="frow" style="margin-bottom:0">
+        <label>Data *</label>
+        <input type="date" id="fin-inp-date">
+      </div>
+    </div>
+    <div class="frow" style="margin-top:12px">
+      <label>Categoria</label>
+      <select id="fin-inp-cat"></select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-c" id="fin-btn-cancel">Cancelar</button>
+      <button class="btn-s" id="fin-btn-save">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: importar extrato bancário -->
+<div class="overlay" id="fin-import-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Importar Extrato</h3>
+    <div class="fin-import-area" id="fin-import-area">
+      <input type="file" id="fin-file-input" accept=".csv,.txt,.ofx">
+      <div class="fin-import-lbl" id="fin-import-lbl">
+        <div style="font-size:1.6rem;margin-bottom:8px">📂</div>
+        <div>Toque para selecionar um arquivo</div>
+        <div style="font-size:.68rem;margin-top:4px;color:var(--muted)">Formatos: CSV, OFX, TXT</div>
+      </div>
+    </div>
+    <div id="fin-import-preview" class="fin-import-preview" style="display:none"></div>
+    <div id="fin-import-count" class="fin-import-count" style="display:none"></div>
+    <div class="modal-btns">
+      <button class="btn-c" id="fin-import-cancel">Cancelar</button>
+      <button class="btn-s" id="fin-import-ok" style="display:none">Importar</button>
     </div>
   </div>
 </div>
@@ -970,7 +1261,11 @@ function switchView(target){
 
   // views
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  const vEl=$id('view-'+(target==='cal'?'cal':'hoje'));
+  let viewId;
+  if(target==='cal') viewId='view-cal';
+  else if(target==='perfil') viewId='view-financeiro';
+  else viewId='view-hoje';
+  const vEl=$id(viewId);
   if(vEl) vEl.classList.add('active');
 
   // nav buttons
@@ -985,6 +1280,11 @@ function switchView(target){
     $id('fab').classList.add('hidden');
     renderCal();
     renderCalPanel();
+  } else if(target==='perfil'){
+    $id('hdr-daily').style.display='none';
+    $id('hdr-monthly').style.display='none';
+    $id('fab').classList.add('hidden');
+    renderFinanceiro();
   } else {
     $id('hdr-daily').style.display='flex';
     $id('hdr-monthly').style.display='none';
@@ -995,7 +1295,433 @@ function switchView(target){
 
 function renderCurrent(){
   if(currentView==='cal'){ renderCal(); renderCalPanel(); }
+  else if(currentView==='perfil') renderFinanceiro();
   else renderDaily();
+}
+
+/* ══ FINANCIAL MODULE ════════════════════════ */
+const FIN_KEY='bm_finance_v1';
+let finDb={transactions:[]};
+let finPeriod='mes';
+let finFilter='todos';
+let finTxnType='receita';
+let parsedImport=[];
+
+function finLoad(){
+  try{ finDb=JSON.parse(localStorage.getItem(FIN_KEY))||{transactions:[]}; }
+  catch{ finDb={transactions:[]}; }
+  if(!finDb.transactions) finDb.transactions=[];
+}
+function finSave(){ localStorage.setItem(FIN_KEY,JSON.stringify(finDb)); }
+
+const FIN_CATS={
+  receita:['honorarios','consultas','outros'],
+  despesa:['aluguel','salarios','material','impostos','outros']
+};
+const FIN_CAT_LABEL={
+  honorarios:'Honorários',consultas:'Consultas',aluguel:'Aluguel',
+  salarios:'Salários',material:'Material',impostos:'Impostos',outros:'Outros'
+};
+const FIN_CAT_COLOR={
+  honorarios:'#1e4d8c',consultas:'#2a7a52',aluguel:'#c4613a',
+  salarios:'#6b3a8c',material:'#e8a020',impostos:'#e05555',outros:'#7a8499'
+};
+
+function fmtBRL(v){
+  return 'R$\u00a0'+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmtK(v){
+  if(v>=1000000) return (v/1000000).toFixed(1)+'M';
+  if(v>=1000) return (v/1000).toFixed(1)+'k';
+  return Math.round(v).toString();
+}
+
+function getPeriodRange(period){
+  const now=new Date();
+  const y=now.getFullYear(),m=now.getMonth();
+  let from;
+  if(period==='mes') from=new Date(y,m,1);
+  else if(period==='3m') from=new Date(y,m-2,1);
+  else if(period==='6m') from=new Date(y,m-5,1);
+  else from=new Date(y,0,1);
+  const to=new Date(y,m+1,0);
+  return{from,to};
+}
+
+function getFilteredTxns(period){
+  const{from,to}=getPeriodRange(period);
+  return finDb.transactions.filter(t=>{
+    const d=new Date(t.date+'T00:00:00');
+    return d>=from&&d<=to;
+  });
+}
+
+function renderFinanceiro(){
+  const txns=getFilteredTxns(finPeriod);
+  const totalReceita=txns.filter(t=>t.type==='receita').reduce((s,t)=>s+t.amount,0);
+  const totalDespesa=txns.filter(t=>t.type==='despesa').reduce((s,t)=>s+t.amount,0);
+  const saldo=totalReceita-totalDespesa;
+
+  $id('fin-total-receita').textContent=fmtBRL(totalReceita);
+  $id('fin-total-despesa').textContent=fmtBRL(totalDespesa);
+  $id('fin-total-saldo').textContent=(saldo<0?'- ':'')+fmtBRL(saldo);
+  const sc=$id('fin-saldo-card');
+  sc.classList.remove('positive','negative');
+  sc.classList.add(saldo>=0?'positive':'negative');
+
+  // Bar chart: always show last 6 months
+  const now=new Date();
+  const barMonths=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const y2=d.getFullYear(),m2=d.getMonth();
+    const lbl=d.toLocaleDateString('pt-BR',{month:'short'}).replace('.','');
+    const mt=finDb.transactions.filter(t=>{
+      const td=new Date(t.date+'T00:00:00');
+      return td.getFullYear()===y2&&td.getMonth()===m2;
+    });
+    barMonths.push({
+      label:lbl.charAt(0).toUpperCase()+lbl.slice(1),
+      receita:mt.filter(t=>t.type==='receita').reduce((s,t)=>s+t.amount,0),
+      despesa:mt.filter(t=>t.type==='despesa').reduce((s,t)=>s+t.amount,0)
+    });
+  }
+  drawBarChart(barMonths);
+
+  // Pie chart: all txns in period by category
+  const catMap={};
+  txns.forEach(t=>{
+    if(!catMap[t.cat]) catMap[t.cat]=0;
+    catMap[t.cat]+=t.amount;
+  });
+  const pieData=Object.entries(catMap)
+    .filter(([,v])=>v>0)
+    .map(([k,v])=>({label:FIN_CAT_LABEL[k]||k,value:v,color:FIN_CAT_COLOR[k]||'#7a8499'}))
+    .sort((a,b)=>b.value-a.value);
+  drawPieChart(pieData,txns.reduce((s,t)=>s+t.amount,0));
+
+  // Transaction list
+  let listTxns=[...txns];
+  if(finFilter!=='todos') listTxns=listTxns.filter(t=>t.type===finFilter);
+  listTxns.sort((a,b)=>b.date.localeCompare(a.date));
+
+  const list=$id('fin-txn-list');
+  list.innerHTML='';
+  if(!listTxns.length){
+    list.innerHTML='<div class="fin-empty"><div class="fin-empty-icon">💰</div>Nenhum lançamento no período.<br>Adicione receitas e despesas.</div>';
+    return;
+  }
+  listTxns.forEach(t=>{
+    const div=document.createElement('div');
+    div.className='fin-txn-item';
+
+    const icon=document.createElement('div');
+    icon.className=`fin-txn-icon ${t.type}`;
+    icon.textContent=t.type==='receita'?'↑':'↓';
+
+    const body=document.createElement('div');
+    body.className='fin-txn-body';
+
+    const desc=document.createElement('div');
+    desc.className='fin-txn-desc';
+    desc.textContent=t.description;
+
+    const meta=document.createElement('div');
+    meta.className='fin-txn-meta';
+
+    const dateEl=document.createElement('span');
+    dateEl.className='fin-txn-date';
+    const d=new Date(t.date+'T00:00:00');
+    dateEl.textContent=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+    meta.appendChild(dateEl);
+
+    if(t.cat){
+      const catEl=document.createElement('span');
+      catEl.className='fin-txn-cat';
+      catEl.style.background=FIN_CAT_COLOR[t.cat]||'#7a8499';
+      catEl.textContent=FIN_CAT_LABEL[t.cat]||t.cat;
+      meta.appendChild(catEl);
+    }
+
+    body.appendChild(desc);
+    body.appendChild(meta);
+
+    const val=document.createElement('div');
+    val.className=`fin-txn-val ${t.type}`;
+    val.textContent=(t.type==='despesa'?'- ':'+\u00a0')+fmtBRL(t.amount);
+
+    const del=document.createElement('button');
+    del.className='fin-txn-del';
+    del.innerHTML='🗑';
+    del.title='Excluir';
+    del.addEventListener('click',()=>{
+      finDb.transactions=finDb.transactions.filter(tx=>tx.id!==t.id);
+      finSave(); renderFinanceiro();
+    });
+
+    div.appendChild(icon);
+    div.appendChild(body);
+    div.appendChild(val);
+    div.appendChild(del);
+    list.appendChild(div);
+  });
+}
+
+/* ── Bar Chart (SVG) ─────────────────────────── */
+function drawBarChart(months){
+  const svg=$id('fin-bar-chart');
+  if(!svg) return;
+  const w=svg.parentElement?svg.parentElement.clientWidth-20:320;
+  svg.setAttribute('width',w);
+  svg.innerHTML='';
+
+  const pad={top:14,right:8,bottom:24,left:38};
+  const cW=w-pad.left-pad.right;
+  const cH=150-pad.top-pad.bottom;
+  const maxVal=Math.max(...months.map(m=>Math.max(m.receita,m.despesa)),100);
+
+  [0,0.5,1].forEach(frac=>{
+    const y=pad.top+cH*(1-frac);
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',pad.left); ln.setAttribute('y1',y);
+    ln.setAttribute('x2',pad.left+cW); ln.setAttribute('y2',y);
+    ln.setAttribute('stroke','#e4e0d8'); ln.setAttribute('stroke-width','1');
+    svg.appendChild(ln);
+    const tx=document.createElementNS('http://www.w3.org/2000/svg','text');
+    tx.setAttribute('x',pad.left-4); tx.setAttribute('y',y+3);
+    tx.setAttribute('text-anchor','end'); tx.setAttribute('font-size','8');
+    tx.setAttribute('fill','#7a8499');
+    tx.textContent=fmtK(maxVal*frac);
+    svg.appendChild(tx);
+  });
+
+  const gW=cW/months.length;
+  const bW=Math.max(5,Math.min(20,gW*0.33));
+
+  months.forEach((m,i)=>{
+    const gx=pad.left+i*gW+gW/2-bW-1;
+
+    const rH=Math.max(2,(m.receita/maxVal)*cH);
+    const rR=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rR.setAttribute('x',gx); rR.setAttribute('y',pad.top+cH-rH);
+    rR.setAttribute('width',bW); rR.setAttribute('height',rH);
+    rR.setAttribute('fill','#2a7a52'); rR.setAttribute('rx','3');
+    svg.appendChild(rR);
+
+    const dH=Math.max(2,(m.despesa/maxVal)*cH);
+    const dR=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    dR.setAttribute('x',gx+bW+2); dR.setAttribute('y',pad.top+cH-dH);
+    dR.setAttribute('width',bW); dR.setAttribute('height',dH);
+    dR.setAttribute('fill','#e05555'); dR.setAttribute('rx','3');
+    svg.appendChild(dR);
+
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',gx+bW+1); lbl.setAttribute('y',pad.top+cH+16);
+    lbl.setAttribute('text-anchor','middle'); lbl.setAttribute('font-size','8');
+    lbl.setAttribute('fill','#7a8499');
+    lbl.textContent=m.label;
+    svg.appendChild(lbl);
+  });
+}
+
+/* ── Pie/Donut Chart (SVG) ───────────────────── */
+function drawPieChart(data,total){
+  const svg=$id('fin-pie-chart');
+  const legend=$id('fin-pie-legend');
+  if(!svg) return;
+  svg.innerHTML='';
+  if(legend) legend.innerHTML='';
+
+  if(!data.length||!total){
+    svg.innerHTML='<circle cx="60" cy="60" r="50" fill="#e4e0d8"/><text x="60" y="64" text-anchor="middle" font-size="10" fill="#7a8499">Sem dados</text>';
+    return;
+  }
+
+  const cx=60,cy=60,r=50,ir=26;
+  let ang=-Math.PI/2;
+
+  data.forEach(d=>{
+    if(!d.value) return;
+    const slice=(d.value/total)*2*Math.PI;
+    const ea=ang+slice;
+    const la=slice>Math.PI?1:0;
+    const x1=cx+r*Math.cos(ang),y1=cy+r*Math.sin(ang);
+    const x2=cx+r*Math.cos(ea),y2=cy+r*Math.sin(ea);
+    const ix1=cx+ir*Math.cos(ang),iy1=cy+ir*Math.sin(ang);
+    const ix2=cx+ir*Math.cos(ea),iy2=cy+ir*Math.sin(ea);
+
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M${ix1} ${iy1}L${x1} ${y1}A${r} ${r} 0 ${la} 1 ${x2} ${y2}L${ix2} ${iy2}A${ir} ${ir} 0 ${la} 0 ${ix1} ${iy1}Z`);
+    path.setAttribute('fill',d.color);
+    svg.appendChild(path);
+
+    if(legend){
+      const item=document.createElement('div');
+      item.className='fin-pie-leg-item';
+      const pct=Math.round((d.value/total)*100);
+      item.innerHTML=`<span class="fin-pie-leg-dot" style="background:${d.color}"></span><span class="fin-pie-leg-name">${d.label}</span><span class="fin-pie-leg-pct">${pct}%</span><span class="fin-pie-leg-val">${fmtBRL(d.value)}</span>`;
+      legend.appendChild(item);
+    }
+    ang=ea;
+  });
+}
+
+/* ── Add Transaction Modal ───────────────────── */
+function openFinModal(){
+  $id('fin-inp-desc').value='';
+  $id('fin-inp-val').value='';
+  $id('fin-inp-date').value=todayKey();
+  finTxnType='receita';
+  updateFinTypeUI();
+  updateFinCatOptions();
+  $id('fin-modal-overlay').classList.add('open');
+  setTimeout(()=>$id('fin-inp-desc').focus(),150);
+}
+function closeFinModal(){ $id('fin-modal-overlay').classList.remove('open'); }
+
+function updateFinTypeUI(){
+  $id('fin-type-receita').classList.toggle('active',finTxnType==='receita');
+  $id('fin-type-despesa').classList.toggle('active',finTxnType==='despesa');
+}
+function updateFinCatOptions(){
+  const sel=$id('fin-inp-cat');
+  sel.innerHTML='';
+  FIN_CATS[finTxnType].forEach(c=>{
+    const o=document.createElement('option');
+    o.value=c; o.textContent=FIN_CAT_LABEL[c];
+    sel.appendChild(o);
+  });
+}
+function saveFinTxn(){
+  const desc=$id('fin-inp-desc').value.trim();
+  if(!desc){ $id('fin-inp-desc').focus(); return; }
+  const val=parseFloat($id('fin-inp-val').value);
+  if(!val||val<=0){ $id('fin-inp-val').focus(); return; }
+  const date=$id('fin-inp-date').value||todayKey();
+  const cat=$id('fin-inp-cat').value;
+  finDb.transactions.push({id:uid(),description:desc,amount:val,type:finTxnType,cat,date});
+  finSave(); closeFinModal(); renderFinanceiro();
+}
+
+/* ── Import Bank Statement (CSV/OFX) ─────────── */
+function openImportModal(){
+  $id('fin-import-preview').style.display='none';
+  $id('fin-import-count').style.display='none';
+  $id('fin-import-ok').style.display='none';
+  $id('fin-file-input').value='';
+  parsedImport=[];
+  $id('fin-import-lbl').innerHTML='<div style="font-size:1.6rem;margin-bottom:8px">📂</div><div>Toque para selecionar um arquivo</div><div style="font-size:.68rem;margin-top:4px">Formatos: CSV, OFX, TXT</div>';
+  $id('fin-import-overlay').classList.add('open');
+}
+function closeImportModal(){ $id('fin-import-overlay').classList.remove('open'); parsedImport=[]; }
+
+function parseCSV(text){
+  const lines=text.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2) return[];
+  const sep=lines[0].split(';').length>lines[0].split(',').length?';':',';
+  function parseLine(l){
+    const cells=[];let cur='',inQ=false;
+    for(const ch of l){
+      if(ch==='"'){inQ=!inQ;continue;}
+      if(ch===sep&&!inQ){cells.push(cur.trim());cur='';}
+      else cur+=ch;
+    }
+    cells.push(cur.trim());return cells;
+  }
+  const rows=lines.map(parseLine);
+  const header=rows[0].map(h=>h.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''));
+  let dateCol=-1,descCol=-1,valCol=-1,typeCol=-1,creditCol=-1,debitCol=-1;
+  header.forEach((h,i)=>{
+    if(dateCol<0&&/data|date/.test(h)) dateCol=i;
+    if(descCol<0&&/descri|hist|memo|lanca|detail/.test(h)) descCol=i;
+    if(valCol<0&&/^valor$|^value$|^amount$|^montant$|^vlr/.test(h)) valCol=i;
+    if(typeCol<0&&/tipo|type|natureza/.test(h)) typeCol=i;
+    if(creditCol<0&&/credit|cred|entrada/.test(h)) creditCol=i;
+    if(debitCol<0&&/debit|deb|saida|saída/.test(h)) debitCol=i;
+  });
+  // positional fallback
+  if(dateCol<0&&descCol<0&&valCol<0){
+    rows.slice(1,4).forEach(row=>{
+      row.forEach((cell,i)=>{
+        if(dateCol<0&&/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(cell)) dateCol=i;
+        if(valCol<0&&i>0){
+          const n=parseFloat(cell.replace(/[R$\s\.]/g,'').replace(',','.'));
+          if(!isNaN(n)&&cell.trim()) valCol=i;
+        }
+      });
+    });
+    if(descCol<0) descCol=dateCol===0?1:(dateCol>0?0:1);
+  }
+  const results=[];
+  rows.slice(1).forEach(row=>{
+    if(!row.length||row.every(c=>!c)) return;
+    let dateStr=null;
+    if(dateCol>=0&&row[dateCol]){
+      const raw=(row[dateCol]||'').trim();
+      const m1=raw.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+      if(m1){let y2=parseInt(m1[3]);if(y2<100)y2+=y2<50?2000:1900;dateStr=`${y2}-${m1[2].padStart(2,'0')}-${m1[1].padStart(2,'0')}`;}
+      const m2=raw.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+      if(!dateStr&&m2)dateStr=`${m2[1]}-${m2[2].padStart(2,'0')}-${m2[3].padStart(2,'0')}`;
+    }
+    if(!dateStr) dateStr=todayKey();
+    const desc=descCol>=0?(row[descCol]||'').trim():(row[0]||'').trim();
+    if(!desc) return;
+    let amount=0,txnType='despesa';
+    if(creditCol>=0||debitCol>=0){
+      const cr=creditCol>=0?parseFloat((row[creditCol]||'0').replace(/[^\d,.\-]/g,'').replace(',','.')):0;
+      const db2=debitCol>=0?parseFloat((row[debitCol]||'0').replace(/[^\d,.\-]/g,'').replace(',','.')):0;
+      if(!isNaN(cr)&&cr>0){amount=cr;txnType='receita';}
+      else if(!isNaN(db2)&&db2>0){amount=db2;txnType='despesa';}
+      else return;
+    } else if(valCol>=0){
+      const raw=(row[valCol]||'').trim();
+      const cleaned=raw.replace(/[R$\s]/g,'').replace(/\.(?=\d{3})/g,'').replace(',','.');
+      const parsed=parseFloat(cleaned);
+      if(isNaN(parsed)||parsed===0) return;
+      amount=Math.abs(parsed);
+      txnType=parsed>=0?'receita':'despesa';
+      if(typeCol>=0&&row[typeCol]){
+        const t=row[typeCol].toLowerCase();
+        if(/cred|rec|entrada|positiv/.test(t)) txnType='receita';
+        if(/deb|desp|saida|negat/.test(t)) txnType='despesa';
+      }
+    } else return;
+    results.push({description:desc.slice(0,100),amount,type:txnType,cat:txnType==='receita'?'outros':'outros',date:dateStr});
+  });
+  return results;
+}
+
+function handleImportFile(file){
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const text=e.target.result;
+    parsedImport=parseCSV(text);
+    const preview=$id('fin-import-preview');
+    const countEl=$id('fin-import-count');
+    const okBtn=$id('fin-import-ok');
+    $id('fin-import-lbl').innerHTML=`<div style="font-size:1.4rem;margin-bottom:4px">✅</div><div style="font-weight:700;color:var(--navy)">${file.name}</div>`;
+    if(parsedImport.length){
+      const sample=parsedImport.slice(0,5).map(t=>`${t.date}  ${t.type==='receita'?'+':'-'} ${fmtBRL(t.amount)}\n  ${t.description.slice(0,45)}`).join('\n');
+      preview.textContent=sample+(parsedImport.length>5?`\n... +${parsedImport.length-5} registros`:'');
+      preview.style.display='block';
+      countEl.textContent=`${parsedImport.length} lançamento(s) encontrado(s)`;
+      countEl.style.display='block';
+      okBtn.style.display='';
+    } else {
+      preview.textContent='Nenhum dado reconhecido. Verifique o formato do arquivo.';
+      preview.style.display='block';
+      countEl.style.display='none';
+      okBtn.style.display='none';
+    }
+  };
+  reader.readAsText(file,'UTF-8');
+}
+
+function doImport(){
+  if(!parsedImport.length) return;
+  parsedImport.forEach(t=>finDb.transactions.push({id:uid(),...t}));
+  finSave(); closeImportModal(); renderFinanceiro(); parsedImport=[];
 }
 
 /* ══ MODAL ════════════════════════════════════ */
@@ -1128,15 +1854,64 @@ $id('btn-det-toggle').addEventListener('click',detailToggleDone);
 $id('btn-det-del').addEventListener('click',detailDelete);
 $id('detail-overlay').addEventListener('click',e=>{ if(e.target===$id('detail-overlay')) closeDetail(); });
 
+// Financial: period tabs
+document.querySelectorAll('.fin-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    finPeriod=btn.dataset.period;
+    document.querySelectorAll('.fin-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderFinanceiro();
+  });
+});
+
+// Financial: filter tabs
+document.querySelectorAll('.fin-filter').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    finFilter=btn.dataset.filter;
+    document.querySelectorAll('.fin-filter').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderFinanceiro();
+  });
+});
+
+// Financial: add button
+$id('fin-btn-add').addEventListener('click',openFinModal);
+
+// Financial: import button
+$id('fin-btn-import').addEventListener('click',openImportModal);
+
+// Financial: type toggle in modal
+$id('fin-type-receita').addEventListener('click',()=>{ finTxnType='receita'; updateFinTypeUI(); updateFinCatOptions(); });
+$id('fin-type-despesa').addEventListener('click',()=>{ finTxnType='despesa'; updateFinTypeUI(); updateFinCatOptions(); });
+
+// Financial: save transaction
+$id('fin-btn-save').addEventListener('click',saveFinTxn);
+$id('fin-btn-cancel').addEventListener('click',closeFinModal);
+$id('fin-modal-overlay').addEventListener('click',e=>{ if(e.target===$id('fin-modal-overlay')) closeFinModal(); });
+
+// Financial: import file
+$id('fin-import-area').addEventListener('click',()=>$id('fin-file-input').click());
+$id('fin-file-input').addEventListener('change',e=>handleImportFile(e.target.files[0]));
+$id('fin-import-cancel').addEventListener('click',closeImportModal);
+$id('fin-import-ok').addEventListener('click',doImport);
+$id('fin-import-overlay').addEventListener('click',e=>{ if(e.target===$id('fin-import-overlay')) closeImportModal(); });
+
+// Drag-and-drop on import area
+$id('fin-import-area').addEventListener('dragover',e=>{ e.preventDefault(); $id('fin-import-area').classList.add('drag'); });
+$id('fin-import-area').addEventListener('dragleave',()=>$id('fin-import-area').classList.remove('drag'));
+$id('fin-import-area').addEventListener('drop',e=>{ e.preventDefault(); $id('fin-import-area').classList.remove('drag'); handleImportFile(e.dataTransfer.files[0]); });
+
 // Keyboard
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     closeModal(); closeDetail(); closeQuickModal(); closeFabMenu();
+    closeFinModal(); closeImportModal();
     $id('confirm-overlay').classList.remove('open');
   }
   if(e.key==='Enter'){
     if($id('modal-overlay').classList.contains('open')&&document.activeElement.tagName!=='TEXTAREA') saveTask();
     if($id('quick-overlay').classList.contains('open')&&document.activeElement.tagName!=='TEXTAREA') saveQuickTask();
+    if($id('fin-modal-overlay').classList.contains('open')&&document.activeElement.tagName!=='TEXTAREA') saveFinTxn();
   }
 });
 
@@ -1158,6 +1933,7 @@ window.addEventListener('appinstalled',()=>{ $id('install-banner').classList.rem
 
 /* ══ INIT ════════════════════════════════════ */
 dbLoad();
+finLoad();
 switchView('hoje');
 
 })(); // IIFE end
