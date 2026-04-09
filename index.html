@@ -1937,17 +1937,24 @@ function showUpdateToast(){
 
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js').then(()=>{
-      navigator.serviceWorker.addEventListener('controllerchange',()=>{
-        if(isUserEditing()){
-          showUpdateToast();
-          document.addEventListener('focusout',function rel(){
-            document.removeEventListener('focusout',rel);
-            setTimeout(()=>window.location.reload(),300);
-          },{once:true});
-        } else {
-          window.location.reload();
-        }
+    navigator.serviceWorker.register('./sw.js').then(reg=>{
+      // updatefound + statechange === 'activated' funciona em todos os browsers,
+      // incluindo iOS Safari em modo standalone (controllerchange não dispara no iOS).
+      reg.addEventListener('updatefound',()=>{
+        const nw=reg.installing;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='activated'){
+            if(isUserEditing()){
+              showUpdateToast();
+              document.addEventListener('focusout',function rel(){
+                document.removeEventListener('focusout',rel);
+                setTimeout(()=>window.location.reload(),300);
+              },{once:true});
+            } else {
+              window.location.reload();
+            }
+          }
+        });
       });
     }).catch(()=>{});
   });
