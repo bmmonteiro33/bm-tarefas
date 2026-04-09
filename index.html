@@ -38,6 +38,40 @@ input,textarea,select{font-family:inherit}
   --hdr-pad:env(safe-area-inset-top,0px);
 }
 
+/* ── DARK THEME ────────────────────────────────── */
+html.dark{
+  --bg:#151b28;
+  --card:#1e2638;
+  --text:#e2e8f4;
+  --muted:#8895aa;
+  --border:#2a3448;
+}
+html.dark body{background:var(--bg)}
+html.dark .app{background:var(--bg)}
+html.dark .modal,
+html.dark .confirm-box{background:var(--card)}
+html.dark .cal-panel{background:var(--card)}
+html.dark .task-card{background:var(--card)}
+html.dark .frow input,
+html.dark .frow textarea,
+html.dark .frow select{background:#151b28;color:var(--text);border-color:var(--border)}
+html.dark .frow input:focus,
+html.dark .frow textarea:focus,
+html.dark .frow select:focus{background:var(--card)}
+html.dark .det-desc-box{background:#151b28}
+html.dark .fin-chart-wrap,html.dark .fin-pie-wrap,
+html.dark .fin-proj-wrap,html.dark .fin-card,
+html.dark .fin-txn-item{background:var(--card)}
+html.dark .fin-cat-btn{background:var(--card);border-color:var(--border)}
+html.dark .fin-cat-btn:hover{background:#252d3d}
+html.dark .fin-cat-btn.selected{background:rgba(196,97,58,.15)}
+html.dark .fab-menu-lbl,html.dark .fab-menu-btn{background:#0a1628}
+html.dark .btn-c{background:#252d3d;color:var(--muted)}
+html.dark .btn-c:hover{background:var(--border)}
+html.dark .fin-type-btn{background:var(--card);border-color:var(--border);color:var(--muted)}
+html.dark .pin-overlay{background:var(--bg)}
+html.dark .pkey{background:var(--card);border-color:var(--border);color:var(--text)}
+
 /* ── ROOT ──────────────────────────────────────── */
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
   font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif}
@@ -397,6 +431,64 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
 .btn-det-del{flex:1;background:#fff0f0;border:none;border-radius:10px;padding:11px;font-size:.84rem;font-weight:700;color:#e05555;transition:background .15s}
 .btn-det-del:hover{background:#ffe0e0}
 
+/* ── THEME TOGGLE ───────────────────────────────── */
+.btn-theme{
+  width:30px;height:30px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.12);color:#fff;
+  font-size:.88rem;display:flex;align-items:center;justify-content:center;
+  margin-right:5px;transition:background .15s;flex-shrink:0;
+}
+.btn-theme:hover{background:rgba(255,255,255,.22)}
+
+/* ── PIN OVERLAY ────────────────────────────────── */
+.pin-overlay{
+  position:fixed;inset:0;
+  background:var(--bg);z-index:500;
+  display:none;align-items:center;justify-content:center;
+  max-width:430px;margin:0 auto;
+  padding-top:env(safe-area-inset-top,0px);
+}
+.pin-box{
+  display:flex;flex-direction:column;align-items:center;
+  padding:36px 30px 28px;width:100%;
+}
+.pin-logo{font-size:2.4rem;margin-bottom:14px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.12))}
+.pin-title{font-size:.98rem;font-weight:700;color:var(--text);margin-bottom:5px}
+.pin-subtitle{font-size:.76rem;color:var(--muted);margin-bottom:26px;text-align:center;max-width:240px}
+.pin-dots{display:flex;gap:14px;margin-bottom:8px}
+.pdot{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid var(--muted);background:transparent;transition:all .15s;
+}
+.pdot.filled{background:var(--navy);border-color:var(--navy)}
+html.dark .pdot.filled{background:var(--accent);border-color:var(--accent)}
+.pin-error{
+  height:18px;font-size:.72rem;color:#e05555;font-weight:600;
+  margin-bottom:20px;text-align:center;
+}
+.pin-pad{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;width:234px;margin-bottom:18px;
+}
+.pkey{
+  width:72px;height:72px;border-radius:50%;
+  border:1.5px solid var(--border);background:var(--card);
+  font-size:1.4rem;font-weight:600;color:var(--text);
+  transition:all .12s;box-shadow:0 2px 8px rgba(13,32,65,.07);
+  -webkit-tap-highlight-color:transparent;
+}
+.pkey:active{transform:scale(.91);background:var(--border)}
+.pkey-util{font-size:.88rem;background:transparent;border-color:transparent;box-shadow:none}
+.pin-footer{display:flex;gap:18px}
+.pin-link{
+  background:none;border:none;font-size:.72rem;color:var(--muted);
+  text-decoration:underline;cursor:pointer;padding:4px;
+}
+.pin-security-note{
+  font-size:.6rem;color:var(--muted);text-align:center;
+  max-width:250px;margin-top:10px;line-height:1.6;padding:0 10px;
+}
+
 /* ── DESKTOP ───────────────────────────────────── */
 @media(min-width:431px){
   .app{box-shadow:0 0 50px rgba(0,0,0,.18);border-radius:24px;margin-top:16px;height:calc(100vh - 32px)}
@@ -652,7 +744,10 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
           <div class="bm-sub">Advocacia</div>
         </div>
       </div>
-      <div class="header-avatar">BM</div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <button class="btn-theme" id="btn-theme" title="Alternar tema">🌙</button>
+        <div class="header-avatar">BM</div>
+      </div>
     </div>
 
     <!-- Daily sub-header -->
@@ -938,6 +1033,43 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
       <button class="btn-det-close" id="btn-det-close">Fechar</button>
       <button class="btn-det-toggle" id="btn-det-toggle">Marcar como feita</button>
       <button class="btn-det-del" id="btn-det-del">🗑</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN OVERLAY: protege área financeira -->
+<div class="pin-overlay" id="pin-overlay">
+  <div class="pin-box">
+    <div class="pin-logo">💰</div>
+    <div class="pin-title" id="pin-title">Área Financeira</div>
+    <div class="pin-subtitle" id="pin-subtitle">Digite seu PIN para continuar</div>
+    <div class="pin-dots" id="pin-dots">
+      <span class="pdot"></span>
+      <span class="pdot"></span>
+      <span class="pdot"></span>
+      <span class="pdot"></span>
+    </div>
+    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-pad">
+      <button class="pkey" data-k="1">1</button>
+      <button class="pkey" data-k="2">2</button>
+      <button class="pkey" data-k="3">3</button>
+      <button class="pkey" data-k="4">4</button>
+      <button class="pkey" data-k="5">5</button>
+      <button class="pkey" data-k="6">6</button>
+      <button class="pkey" data-k="7">7</button>
+      <button class="pkey" data-k="8">8</button>
+      <button class="pkey" data-k="9">9</button>
+      <button class="pkey pkey-util" id="pkey-skip"></button>
+      <button class="pkey" data-k="0">0</button>
+      <button class="pkey pkey-util" id="pkey-del">⌫</button>
+    </div>
+    <div class="pin-footer">
+      <button class="pin-link" id="pin-reset">Redefinir PIN</button>
+    </div>
+    <div class="pin-security-note">
+      🔒 Dados armazenados localmente neste dispositivo.<br>
+      Para proteção total, ative também o bloqueio de tela.
     </div>
   </div>
 </div>
@@ -1348,7 +1480,13 @@ function switchView(target){
     $id('hdr-daily').style.display='none';
     $id('hdr-monthly').style.display='none';
     $id('fab').classList.add('hidden');
-    renderFinanceiro();
+    if(!finUnlocked){
+      if(isPinConfigured()) openPinOverlay(false);
+      else openPinOverlay(true);
+    } else {
+      startLockTimer();
+      renderFinanceiro();
+    }
   } else {
     $id('hdr-daily').style.display='flex';
     $id('hdr-monthly').style.display='none';
@@ -1383,35 +1521,53 @@ function finSave(){ localStorage.setItem(FIN_KEY,JSON.stringify(finDb)); }
 
 const FIN_CATS={
   receita:['honorarios','consultas','investimentos','outros'],
-  despesa:['alimentacao','moradia','transporte','saude','lazer','educacao','vestuario','servicos','poupanca','impostos','outros']
+  despesa:['alimentacao','mercado','moradia','transporte','saude','lazer','educacao','vestuario','servicos','pets','cartao','presentes','poupanca','impostos','outros']
 };
 const FIN_CAT_LABEL={
-  // receita
   honorarios:'Honorários',consultas:'Consultas',investimentos:'Investimentos',
-  // despesa (new)
-  alimentacao:'Alimentação',moradia:'Moradia',transporte:'Transporte',
+  alimentacao:'Alimentação',mercado:'Mercado',moradia:'Moradia',transporte:'Transporte',
   saude:'Saúde',lazer:'Lazer',educacao:'Educação',
-  vestuario:'Vestuário',servicos:'Serviços',poupanca:'Poupança',
+  vestuario:'Vestuário',servicos:'Serviços',pets:'Pets',
+  cartao:'Cartão',presentes:'Presentes',poupanca:'Poupança',
   impostos:'Impostos',outros:'Outros',
-  // legado (backward compat)
   aluguel:'Aluguel',salarios:'Salários',material:'Material'
 };
 const FIN_CAT_COLOR={
   honorarios:'#1e4d8c',consultas:'#2a7a52',investimentos:'#0891b2',
-  alimentacao:'#ea580c',moradia:'#c4613a',transporte:'#6366f1',
+  alimentacao:'#ea580c',mercado:'#16a34a',moradia:'#c4613a',transporte:'#6366f1',
   saude:'#e05555',lazer:'#8b5cf6',educacao:'#0369a1',
-  vestuario:'#db2777',servicos:'#64748b',poupanca:'#16a34a',
+  vestuario:'#db2777',servicos:'#64748b',pets:'#f59e0b',
+  cartao:'#0284c7',presentes:'#ec4899',poupanca:'#16a34a',
   impostos:'#dc2626',outros:'#7a8499',
   aluguel:'#c4613a',salarios:'#6b3a8c',material:'#e8a020'
 };
 const FIN_CAT_ICON={
   honorarios:'⚖️',consultas:'💼',investimentos:'📈',
-  alimentacao:'🍽️',moradia:'🏠',transporte:'🚗',
+  alimentacao:'🍽️',mercado:'🛒',moradia:'🏠',transporte:'🚗',
   saude:'❤️',lazer:'🎯',educacao:'📚',
-  vestuario:'👕',servicos:'🔧',poupanca:'💰',
+  vestuario:'👕',servicos:'🔧',pets:'🐾',
+  cartao:'💳',presentes:'🎁',poupanca:'💰',
   impostos:'🧾',outros:'📦',
   aluguel:'🏠',salarios:'👥',material:'📋'
 };
+
+/* ── Theme ──────────────────────────────────────── */
+const THEME_KEY='bm_theme';
+function isDark(){ return document.documentElement.classList.contains('dark'); }
+function tcol(light,dark){ return isDark()?dark:light; }
+function applyTheme(theme){
+  document.documentElement.classList.toggle('dark',theme==='dark');
+  localStorage.setItem(THEME_KEY,theme);
+  const btn=$id('btn-theme');
+  if(btn) btn.textContent=theme==='dark'?'☀️':'🌙';
+  if(currentView==='perfil'&&finUnlocked) renderFinanceiro();
+}
+function loadTheme(){
+  const saved=localStorage.getItem(THEME_KEY);
+  if(saved) applyTheme(saved);
+  else if(window.matchMedia('(prefers-color-scheme:dark)').matches) applyTheme('dark');
+  else applyTheme('light');
+}
 
 function fmtBRL(v){
   return 'R$\u00a0'+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1580,6 +1736,111 @@ function renderFinanceiro(){
   });
 }
 
+/* ── PIN Security ────────────────────────────── */
+const PIN_KEY='bm_pin_v1';
+const PIN_SALT='bm-tarefas-financeiro-2026';
+const LOCK_MS=5*60*1000; // auto-lock após 5 min
+let finUnlocked=false;
+let pinBuffer='';
+let pinSetupMode=false;
+let pinSetupFirst='';
+let lockTimer=null;
+
+function isPinConfigured(){ return !!localStorage.getItem(PIN_KEY); }
+
+async function hashPIN(pin){
+  const enc=new TextEncoder();
+  const buf=await crypto.subtle.digest('SHA-256',enc.encode(pin+PIN_SALT));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function openPinOverlay(setup){
+  pinBuffer=''; pinSetupMode=!!setup; pinSetupFirst='';
+  $id('pin-error').textContent='';
+  const skip=$id('pkey-skip');
+  if(setup){
+    $id('pin-title').textContent='Criar PIN de segurança';
+    $id('pin-subtitle').textContent='Proteja seus dados financeiros com um PIN de 4 dígitos';
+    skip.textContent='Pular'; skip.style.fontSize='.7rem'; skip.style.display='';
+  } else {
+    $id('pin-title').textContent='Área Financeira';
+    $id('pin-subtitle').textContent='Digite seu PIN para continuar';
+    skip.style.display='none';
+  }
+  renderPinDots();
+  $id('pin-overlay').style.display='flex';
+}
+function closePinOverlay(){ $id('pin-overlay').style.display='none'; pinBuffer=''; pinSetupFirst=''; }
+
+function renderPinDots(){
+  $id('pin-dots').querySelectorAll('.pdot').forEach((d,i)=>{
+    d.classList.toggle('filled',i<pinBuffer.length);
+  });
+}
+
+function pinKeyPress(k){
+  if(pinBuffer.length>=4) return;
+  pinBuffer+=k;
+  renderPinDots();
+  if(pinBuffer.length===4) setTimeout(processPIN,160);
+}
+
+function pinDel(){
+  if(!pinBuffer.length) return;
+  pinBuffer=pinBuffer.slice(0,-1);
+  renderPinDots();
+}
+
+async function processPIN(){
+  const hash=await hashPIN(pinBuffer);
+  if(pinSetupMode){
+    if(!pinSetupFirst){
+      pinSetupFirst=hash; pinBuffer='';
+      $id('pin-title').textContent='Confirmar PIN';
+      $id('pin-subtitle').textContent='Digite o mesmo PIN novamente';
+      $id('pkey-skip').style.display='none';
+      renderPinDots(); $id('pin-error').textContent='';
+    } else {
+      if(hash===pinSetupFirst){
+        localStorage.setItem(PIN_KEY,hash);
+        finUnlocked=true; closePinOverlay(); startLockTimer(); renderFinanceiro();
+      } else {
+        $id('pin-error').textContent='PINs não coincidem. Tente novamente.';
+        pinBuffer=''; pinSetupFirst='';
+        $id('pin-title').textContent='Criar PIN de segurança';
+        $id('pin-subtitle').textContent='Proteja seus dados financeiros com um PIN de 4 dígitos';
+        $id('pkey-skip').textContent='Pular'; $id('pkey-skip').style.display='';
+        renderPinDots();
+      }
+    }
+  } else {
+    const stored=localStorage.getItem(PIN_KEY);
+    if(hash===stored){
+      finUnlocked=true; closePinOverlay(); startLockTimer(); renderFinanceiro();
+    } else {
+      $id('pin-error').textContent='PIN incorreto. Tente novamente.';
+      pinBuffer=''; renderPinDots();
+    }
+  }
+}
+
+function startLockTimer(){
+  if(lockTimer) clearTimeout(lockTimer);
+  lockTimer=setTimeout(()=>{
+    finUnlocked=false; lockTimer=null;
+    if(currentView==='perfil') openPinOverlay(false);
+  },LOCK_MS);
+}
+
+function resetPinFlow(){
+  finUnlocked=false;
+  localStorage.removeItem(PIN_KEY);
+  closePinOverlay();
+  // Navigate away and back to trigger setup
+  switchView('hoje');
+  setTimeout(()=>{ switchView('perfil'); },100);
+}
+
 /* ── Category Picker ─────────────────────────── */
 function openCatPicker(txn){
   catPickerTxn=txn;
@@ -1684,12 +1945,12 @@ function drawBarChart(months){
     const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
     ln.setAttribute('x1',pad.left); ln.setAttribute('y1',y);
     ln.setAttribute('x2',pad.left+cW); ln.setAttribute('y2',y);
-    ln.setAttribute('stroke','#e4e0d8'); ln.setAttribute('stroke-width','1');
+    ln.setAttribute('stroke',tcol('#e4e0d8','#2a3448')); ln.setAttribute('stroke-width','1');
     svg.appendChild(ln);
     const tx=document.createElementNS('http://www.w3.org/2000/svg','text');
     tx.setAttribute('x',pad.left-4); tx.setAttribute('y',y+3);
     tx.setAttribute('text-anchor','end'); tx.setAttribute('font-size','8');
-    tx.setAttribute('fill','#7a8499');
+    tx.setAttribute('fill',tcol('#7a8499','#8895aa'));
     tx.textContent=fmtK(maxVal*frac);
     svg.appendChild(tx);
   });
@@ -1717,7 +1978,7 @@ function drawBarChart(months){
     const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
     lbl.setAttribute('x',gx+bW+1); lbl.setAttribute('y',pad.top+cH+16);
     lbl.setAttribute('text-anchor','middle'); lbl.setAttribute('font-size','8');
-    lbl.setAttribute('fill','#7a8499');
+    lbl.setAttribute('fill',tcol('#7a8499','#8895aa'));
     lbl.textContent=m.label;
     svg.appendChild(lbl);
   });
@@ -1732,7 +1993,7 @@ function drawPieChart(data,total){
   if(legend) legend.innerHTML='';
 
   if(!data.length||!total){
-    svg.innerHTML='<circle cx="60" cy="60" r="50" fill="#e4e0d8"/><text x="60" y="64" text-anchor="middle" font-size="10" fill="#7a8499">Sem dados</text>';
+    svg.innerHTML=`<circle cx="60" cy="60" r="50" fill="${tcol('#e4e0d8','#2a3448')}"/><text x="60" y="64" text-anchor="middle" font-size="10" fill="${tcol('#7a8499','#8895aa')}">Sem dados</text>`;
     return;
   }
 
@@ -2079,6 +2340,26 @@ $id('fin-next-month').addEventListener('click',()=>{
 $id('fin-cat-cancel').addEventListener('click',closeCatPicker);
 $id('fin-cat-overlay').addEventListener('click',e=>{ if(e.target===$id('fin-cat-overlay')) closeCatPicker(); });
 
+// Theme toggle
+$id('btn-theme').addEventListener('click',()=>{
+  applyTheme(isDark()?'light':'dark');
+});
+
+// PIN pad
+document.querySelectorAll('.pkey[data-k]').forEach(btn=>{
+  btn.addEventListener('click',()=>pinKeyPress(btn.dataset.k));
+});
+$id('pkey-del').addEventListener('click',pinDel);
+$id('pkey-skip').addEventListener('click',()=>{
+  // Skip PIN setup — unlock without protection
+  finUnlocked=true; closePinOverlay(); renderFinanceiro();
+});
+$id('pin-reset').addEventListener('click',resetPinFlow);
+// Reset lock timer on any touch inside financial view
+$id('view-financeiro').addEventListener('pointerdown',()=>{
+  if(finUnlocked) startLockTimer();
+});
+
 // Financial: filter tabs
 document.querySelectorAll('.fin-filter').forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -2149,6 +2430,7 @@ window.addEventListener('appinstalled',()=>{ $id('install-banner').classList.rem
 /* ══ INIT ════════════════════════════════════ */
 dbLoad();
 finLoad();
+loadTheme();
 switchView('hoje');
 
 })(); // IIFE end
