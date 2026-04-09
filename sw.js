@@ -1,4 +1,4 @@
-const CACHE = 'bm-tarefas-v2';
+const CACHE = 'bm-tarefas-v5';
 const FILES = [
   './index.html',
   './manifest.json',
@@ -6,16 +6,9 @@ const FILES = [
   './icon-512.png'
 ];
 
-// Listen for skip-waiting message from the app
-self.addEventListener('message', e => {
-  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
-});
-
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(FILES))
-    // Note: do NOT call skipWaiting() here automatically;
-    // the app will call it after showing the update banner.
+    caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())
   );
 });
 
