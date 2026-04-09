@@ -536,7 +536,60 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
 .fin-empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:.82rem}
 .fin-empty-icon{font-size:2rem;margin-bottom:6px}
 
-/* Add transaction modal */
+/* Month navigator */
+.fin-month-nav{
+  display:none;align-items:center;justify-content:center;gap:14px;
+  padding:0 14px 10px;
+}
+.fin-month-nav.show{display:flex}
+.fin-month-lbl{
+  font-size:.88rem;font-weight:700;color:var(--text);
+  min-width:136px;text-align:center;text-transform:capitalize;
+}
+
+/* Category picker grid */
+.fin-cat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;
+}
+.fin-cat-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 4px;border-radius:12px;border:2px solid var(--border);
+  background:#fff;transition:all .15s;cursor:pointer;
+}
+.fin-cat-btn:hover{border-color:var(--navy);background:#f7f5f0}
+.fin-cat-btn.selected{border-color:var(--accent);background:rgba(196,97,58,.09)}
+.fin-cat-icon{font-size:1.35rem;line-height:1}
+.fin-cat-name{font-size:.58rem;font-weight:700;color:var(--muted);text-align:center}
+.fin-cat-picker-desc{
+  font-size:.78rem;color:var(--muted);text-align:center;
+  margin-bottom:12px;font-style:italic;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px;
+}
+
+/* Projection section */
+.fin-proj-wrap{background:var(--card);border-radius:13px;padding:12px 14px;box-shadow:0 2px 10px rgba(13,32,65,.07)}
+.fin-proj-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid var(--border);
+}
+.fin-proj-item:last-child{border-bottom:none}
+.fin-proj-icon{font-size:1.05rem;flex-shrink:0;width:24px;text-align:center}
+.fin-proj-name{flex:1;font-size:.8rem;font-weight:600;color:var(--text)}
+.fin-proj-avg{font-size:.74rem;color:var(--muted);margin-right:4px}
+.fin-proj-val{font-size:.82rem;font-weight:700;color:var(--text)}
+.fin-proj-trend{font-size:1rem;font-weight:800;flex-shrink:0;width:22px;text-align:center}
+.fin-proj-trend.up{color:#e05555}
+.fin-proj-trend.down{color:#2a7a52}
+.fin-proj-trend.stable{color:var(--muted)}
+.fin-proj-note{
+  font-size:.63rem;color:var(--muted);text-align:center;
+  margin-top:8px;font-style:italic;
+}
+.fin-proj-empty{text-align:center;padding:12px;color:var(--muted);font-size:.78rem}
+
+/* Clickable transaction */
+.fin-txn-item{cursor:pointer}
+.fin-txn-item:active{background:#f7f5f0}
 .fin-type-btns{display:flex;gap:8px;margin-bottom:12px}
 .fin-type-btn{
   flex:1;padding:9px;border-radius:10px;
@@ -678,10 +731,17 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
   <div class="view" id="view-financeiro">
     <!-- Period Selector -->
     <div class="fin-period-tabs" id="fin-period-tabs">
-      <button class="fin-tab active" data-period="mes">Este mês</button>
+      <button class="fin-tab active" data-period="navmes">Mês</button>
       <button class="fin-tab" data-period="3m">3 meses</button>
       <button class="fin-tab" data-period="6m">6 meses</button>
       <button class="fin-tab" data-period="ano">Este ano</button>
+    </div>
+
+    <!-- Month Navigator (visible only in "Mês" mode) -->
+    <div class="fin-month-nav show" id="fin-month-nav">
+      <button class="btn-nav-rnd" id="fin-prev-month">&#8592;</button>
+      <span class="fin-month-lbl" id="fin-month-lbl"></span>
+      <button class="btn-nav-rnd" id="fin-next-month">&#8594;</button>
     </div>
 
     <!-- Summary Cards -->
@@ -719,6 +779,12 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
         <svg id="fin-pie-chart" width="120" height="120" viewBox="0 0 120 120" style="flex-shrink:0"></svg>
         <div class="fin-pie-legend" id="fin-pie-legend"></div>
       </div>
+    </div>
+
+    <!-- Projection -->
+    <div class="fin-section">
+      <div class="fin-section-title">Projeção — próximo mês</div>
+      <div class="fin-proj-wrap" id="fin-proj-wrap"></div>
     </div>
 
     <!-- Transactions -->
@@ -872,6 +938,19 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
       <button class="btn-det-close" id="btn-det-close">Fechar</button>
       <button class="btn-det-toggle" id="btn-det-toggle">Marcar como feita</button>
       <button class="btn-det-del" id="btn-det-del">🗑</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: categorizar lançamento -->
+<div class="overlay" id="fin-cat-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Categorizar lançamento</h3>
+    <div class="fin-cat-picker-desc" id="fin-cat-picker-desc"></div>
+    <div class="fin-cat-grid" id="fin-cat-grid"></div>
+    <div class="modal-btns">
+      <button class="btn-c" id="fin-cat-cancel">Fechar</button>
     </div>
   </div>
 </div>
@@ -1287,10 +1366,13 @@ function renderCurrent(){
 /* ══ FINANCIAL MODULE ════════════════════════ */
 const FIN_KEY='bm_finance_v1';
 let finDb={transactions:[]};
-let finPeriod='mes';
+let finPeriod='navmes';
 let finFilter='todos';
 let finTxnType='receita';
 let parsedImport=[];
+let finNavYear=TODAY.getFullYear();
+let finNavMonth=TODAY.getMonth();
+let catPickerTxn=null;
 
 function finLoad(){
   try{ finDb=JSON.parse(localStorage.getItem(FIN_KEY))||{transactions:[]}; }
@@ -1300,16 +1382,35 @@ function finLoad(){
 function finSave(){ localStorage.setItem(FIN_KEY,JSON.stringify(finDb)); }
 
 const FIN_CATS={
-  receita:['honorarios','consultas','outros'],
-  despesa:['aluguel','salarios','material','impostos','outros']
+  receita:['honorarios','consultas','investimentos','outros'],
+  despesa:['alimentacao','moradia','transporte','saude','lazer','educacao','vestuario','servicos','poupanca','impostos','outros']
 };
 const FIN_CAT_LABEL={
-  honorarios:'Honorários',consultas:'Consultas',aluguel:'Aluguel',
-  salarios:'Salários',material:'Material',impostos:'Impostos',outros:'Outros'
+  // receita
+  honorarios:'Honorários',consultas:'Consultas',investimentos:'Investimentos',
+  // despesa (new)
+  alimentacao:'Alimentação',moradia:'Moradia',transporte:'Transporte',
+  saude:'Saúde',lazer:'Lazer',educacao:'Educação',
+  vestuario:'Vestuário',servicos:'Serviços',poupanca:'Poupança',
+  impostos:'Impostos',outros:'Outros',
+  // legado (backward compat)
+  aluguel:'Aluguel',salarios:'Salários',material:'Material'
 };
 const FIN_CAT_COLOR={
-  honorarios:'#1e4d8c',consultas:'#2a7a52',aluguel:'#c4613a',
-  salarios:'#6b3a8c',material:'#e8a020',impostos:'#e05555',outros:'#7a8499'
+  honorarios:'#1e4d8c',consultas:'#2a7a52',investimentos:'#0891b2',
+  alimentacao:'#ea580c',moradia:'#c4613a',transporte:'#6366f1',
+  saude:'#e05555',lazer:'#8b5cf6',educacao:'#0369a1',
+  vestuario:'#db2777',servicos:'#64748b',poupanca:'#16a34a',
+  impostos:'#dc2626',outros:'#7a8499',
+  aluguel:'#c4613a',salarios:'#6b3a8c',material:'#e8a020'
+};
+const FIN_CAT_ICON={
+  honorarios:'⚖️',consultas:'💼',investimentos:'📈',
+  alimentacao:'🍽️',moradia:'🏠',transporte:'🚗',
+  saude:'❤️',lazer:'🎯',educacao:'📚',
+  vestuario:'👕',servicos:'🔧',poupanca:'💰',
+  impostos:'🧾',outros:'📦',
+  aluguel:'🏠',salarios:'👥',material:'📋'
 };
 
 function fmtBRL(v){
@@ -1324,13 +1425,29 @@ function fmtK(v){
 function getPeriodRange(period){
   const now=new Date();
   const y=now.getFullYear(),m=now.getMonth();
-  let from;
-  if(period==='mes') from=new Date(y,m,1);
-  else if(period==='3m') from=new Date(y,m-2,1);
-  else if(period==='6m') from=new Date(y,m-5,1);
-  else from=new Date(y,0,1);
-  const to=new Date(y,m+1,0);
+  let from,to;
+  if(period==='navmes'){
+    from=new Date(finNavYear,finNavMonth,1);
+    to=new Date(finNavYear,finNavMonth+1,0);
+  } else if(period==='3m'){
+    from=new Date(y,m-2,1); to=new Date(y,m+1,0);
+  } else if(period==='6m'){
+    from=new Date(y,m-5,1); to=new Date(y,m+1,0);
+  } else {
+    from=new Date(y,0,1); to=new Date(y,11,31);
+  }
   return{from,to};
+}
+
+function renderMonthNav(){
+  const isNav=finPeriod==='navmes';
+  const nav=$id('fin-month-nav');
+  if(nav) nav.classList.toggle('show',isNav);
+  if(isNav){
+    const d=new Date(finNavYear,finNavMonth,1);
+    const lbl=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    $id('fin-month-lbl').textContent=lbl.charAt(0).toUpperCase()+lbl.slice(1);
+  }
 }
 
 function getFilteredTxns(period){
@@ -1342,6 +1459,8 @@ function getFilteredTxns(period){
 }
 
 function renderFinanceiro(){
+  renderMonthNav();
+
   const txns=getFilteredTxns(finPeriod);
   const totalReceita=txns.filter(t=>t.type==='receita').reduce((s,t)=>s+t.amount,0);
   const totalDespesa=txns.filter(t=>t.type==='despesa').reduce((s,t)=>s+t.amount,0);
@@ -1354,7 +1473,7 @@ function renderFinanceiro(){
   sc.classList.remove('positive','negative');
   sc.classList.add(saldo>=0?'positive':'negative');
 
-  // Bar chart: always show last 6 months
+  // Bar chart: last 6 months always
   const now=new Date();
   const barMonths=[];
   for(let i=5;i>=0;i--){
@@ -1373,17 +1492,22 @@ function renderFinanceiro(){
   }
   drawBarChart(barMonths);
 
-  // Pie chart: all txns in period by category
+  // Pie chart: despesas do período por categoria
+  const despesas=txns.filter(t=>t.type==='despesa');
   const catMap={};
-  txns.forEach(t=>{
+  despesas.forEach(t=>{
     if(!catMap[t.cat]) catMap[t.cat]=0;
     catMap[t.cat]+=t.amount;
   });
+  const pieTotal=despesas.reduce((s,t)=>s+t.amount,0);
   const pieData=Object.entries(catMap)
     .filter(([,v])=>v>0)
-    .map(([k,v])=>({label:FIN_CAT_LABEL[k]||k,value:v,color:FIN_CAT_COLOR[k]||'#7a8499'}))
+    .map(([k,v])=>({label:FIN_CAT_LABEL[k]||k,value:v,color:FIN_CAT_COLOR[k]||'#7a8499',icon:FIN_CAT_ICON[k]||'📦'}))
     .sort((a,b)=>b.value-a.value);
-  drawPieChart(pieData,txns.reduce((s,t)=>s+t.amount,0));
+  drawPieChart(pieData,pieTotal);
+
+  // Projections
+  renderProjections();
 
   // Transaction list
   let listTxns=[...txns];
@@ -1399,6 +1523,9 @@ function renderFinanceiro(){
   listTxns.forEach(t=>{
     const div=document.createElement('div');
     div.className='fin-txn-item';
+    div.addEventListener('click',e=>{
+      if(!e.target.closest('.fin-txn-del')) openCatPicker(t);
+    });
 
     const icon=document.createElement('div');
     icon.className=`fin-txn-icon ${t.type}`;
@@ -1424,7 +1551,7 @@ function renderFinanceiro(){
       const catEl=document.createElement('span');
       catEl.className='fin-txn-cat';
       catEl.style.background=FIN_CAT_COLOR[t.cat]||'#7a8499';
-      catEl.textContent=FIN_CAT_LABEL[t.cat]||t.cat;
+      catEl.textContent=(FIN_CAT_ICON[t.cat]||'')+' '+(FIN_CAT_LABEL[t.cat]||t.cat);
       meta.appendChild(catEl);
     }
 
@@ -1439,7 +1566,8 @@ function renderFinanceiro(){
     del.className='fin-txn-del';
     del.innerHTML='🗑';
     del.title='Excluir';
-    del.addEventListener('click',()=>{
+    del.addEventListener('click',e=>{
+      e.stopPropagation();
       finDb.transactions=finDb.transactions.filter(tx=>tx.id!==t.id);
       finSave(); renderFinanceiro();
     });
@@ -1450,6 +1578,92 @@ function renderFinanceiro(){
     div.appendChild(del);
     list.appendChild(div);
   });
+}
+
+/* ── Category Picker ─────────────────────────── */
+function openCatPicker(txn){
+  catPickerTxn=txn;
+  const desc=$id('fin-cat-picker-desc');
+  if(desc) desc.textContent=`${txn.description} — ${fmtBRL(txn.amount)}`;
+  const grid=$id('fin-cat-grid');
+  grid.innerHTML='';
+  const cats=FIN_CATS[txn.type]||FIN_CATS.despesa;
+  cats.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='fin-cat-btn'+(txn.cat===c?' selected':'');
+    btn.innerHTML=`<span class="fin-cat-icon">${FIN_CAT_ICON[c]||'📦'}</span><span class="fin-cat-name">${FIN_CAT_LABEL[c]||c}</span>`;
+    btn.addEventListener('click',()=>{
+      const t=finDb.transactions.find(x=>x.id===catPickerTxn.id);
+      if(t){ t.cat=c; finSave(); }
+      closeCatPicker();
+      renderFinanceiro();
+    });
+    grid.appendChild(btn);
+  });
+  $id('fin-cat-overlay').classList.add('open');
+}
+function closeCatPicker(){ $id('fin-cat-overlay').classList.remove('open'); catPickerTxn=null; }
+
+/* ── Projections ─────────────────────────────── */
+function calcProjections(){
+  // Uses last 3 full months (not current month) for averages and trend
+  const now=new Date();
+  const months=[];
+  for(let i=3;i>=1;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    months.push({y:d.getFullYear(),m:d.getMonth()});
+  }
+  // Gather despesa cats
+  const catKeys=new Set();
+  finDb.transactions.filter(t=>t.type==='despesa').forEach(t=>catKeys.add(t.cat));
+  const results=[];
+  catKeys.forEach(cat=>{
+    const monthly=months.map(({y,m})=>{
+      return finDb.transactions
+        .filter(t=>t.type==='despesa'&&t.cat===cat)
+        .filter(t=>{ const d=new Date(t.date+'T00:00:00'); return d.getFullYear()===y&&d.getMonth()===m; })
+        .reduce((s,t)=>s+t.amount,0);
+    });
+    const hasData=monthly.some(v=>v>0);
+    if(!hasData) return;
+    const avg=monthly.reduce((s,v)=>s+v,0)/3;
+    // trend: last month vs avg of first 2
+    const last=monthly[2];
+    const prevAvg=(monthly[0]+monthly[1])/2||avg;
+    let trend='stable';
+    if(prevAvg>0){
+      if(last>prevAvg*1.12) trend='up';
+      else if(last<prevAvg*0.88) trend='down';
+    }
+    results.push({cat,avg,trend,last});
+  });
+  return results.sort((a,b)=>b.avg-a.avg);
+}
+
+function renderProjections(){
+  const wrap=$id('fin-proj-wrap');
+  if(!wrap) return;
+  const proj=calcProjections();
+  wrap.innerHTML='';
+  if(!proj.length){
+    wrap.innerHTML='<div class="fin-proj-empty">Adicione lançamentos de despesas em pelo menos 1 mês para ver a projeção.</div>';
+    return;
+  }
+  proj.forEach(({cat,avg,trend})=>{
+    const item=document.createElement('div');
+    item.className='fin-proj-item';
+    const trendSymbol=trend==='up'?'↑':trend==='down'?'↓':'→';
+    item.innerHTML=`
+      <span class="fin-proj-icon">${FIN_CAT_ICON[cat]||'📦'}</span>
+      <span class="fin-proj-name">${FIN_CAT_LABEL[cat]||cat}</span>
+      <span class="fin-proj-val">${fmtBRL(avg)}</span>
+      <span class="fin-proj-trend ${trend}">${trendSymbol}</span>`;
+    wrap.appendChild(item);
+  });
+  const note=document.createElement('div');
+  note.className='fin-proj-note';
+  note.textContent='Média dos últimos 3 meses • ↑ subindo  ↓ caindo  → estável';
+  wrap.appendChild(note);
 }
 
 /* ── Bar Chart (SVG) ─────────────────────────── */
@@ -1849,6 +2063,22 @@ document.querySelectorAll('.fin-tab').forEach(btn=>{
   });
 });
 
+// Financial: month navigation
+$id('fin-prev-month').addEventListener('click',()=>{
+  finNavMonth--;
+  if(finNavMonth<0){ finNavMonth=11; finNavYear--; }
+  renderFinanceiro();
+});
+$id('fin-next-month').addEventListener('click',()=>{
+  finNavMonth++;
+  if(finNavMonth>11){ finNavMonth=0; finNavYear++; }
+  renderFinanceiro();
+});
+
+// Financial: category picker
+$id('fin-cat-cancel').addEventListener('click',closeCatPicker);
+$id('fin-cat-overlay').addEventListener('click',e=>{ if(e.target===$id('fin-cat-overlay')) closeCatPicker(); });
+
 // Financial: filter tabs
 document.querySelectorAll('.fin-filter').forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -1890,7 +2120,7 @@ $id('fin-import-area').addEventListener('drop',e=>{ e.preventDefault(); $id('fin
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     closeModal(); closeDetail(); closeQuickModal(); closeFabMenu();
-    closeFinModal(); closeImportModal();
+    closeFinModal(); closeImportModal(); closeCatPicker();
     $id('confirm-overlay').classList.remove('open');
   }
   if(e.key==='Enter'){
